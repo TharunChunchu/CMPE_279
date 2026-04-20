@@ -103,7 +103,7 @@ function App() {
     <div className="app-container">
       <header className="header">
         <h1>Phishing Sentinel</h1>
-        <p>AI-Powered Email Header Analysis & Spoof Detection</p>
+        <p>Heuristic-Powered Email Header Analysis & Spoof Detection</p>
         
         <div className="mode-toggle">
           <button 
