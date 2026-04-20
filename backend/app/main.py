@@ -1,5 +1,7 @@
+import os
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 from app.parser import parse_eml
 from app.heuristics import evaluate_email
 
@@ -14,18 +16,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+class BulkScanRequest(BaseModel):
+    directory_path: str
+
 @app.post("/api/scan")
 async def scan_email(file: UploadFile = File(...)):
     """ Endpoint to upload an .eml file and get phishing detection results. """
     try:
         content = await file.read()
-        
-        # Parse the email bytes
         parsed_data = parse_eml(content)
-        
-        # Evaluate heuristics
         results = evaluate_email(parsed_data)
-        
         return {
             "success": True,
             "filename": file.filename,
@@ -33,10 +33,47 @@ async def scan_email(file: UploadFile = File(...)):
             "results": results
         }
     except Exception as e:
-        return {
-            "success": False,
-            "error": str(e)
-        }
+        return {"success": False, "error": str(e)}
+
+@app.post("/api/bulk_scan")
+async def bulk_scan_directory(req: BulkScanRequest):
+    directory_path = req.directory_path
+    if not os.path.exists(directory_path) or not os.path.isdir(directory_path):
+        return {"success": False, "error": f"Directory does not exist: {directory_path}"}
+        
+    safe_count = 0
+    suspicious_count = 0
+    phishing_count = 0
+    
+    files = [f for f in os.listdir(directory_path) if os.path.isfile(os.path.join(directory_path, f))]
+    total = len(files)
+    if total == 0:
+        return {"success": False, "error": "No files found in directory."}
+    
+    for filename in files:
+        filepath = os.path.join(directory_path, filename)
+        try:
+            with open(filepath, 'rb') as f:
+                content = f.read()
+            parsed_data = parse_eml(content)
+            result = evaluate_email(parsed_data)
+        except Exception:
+            continue
+            
+        if result['status'] == 'Phishing':
+            phishing_count += 1
+        elif result['status'] == 'Suspicious':
+            suspicious_count += 1
+        else:
+            safe_count += 1
+            
+    return {
+        "success": True,
+        "total": total,
+        "safe": safe_count,
+        "suspicious": suspicious_count,
+        "phishing": phishing_count
+    }
 
 @app.get("/")
 def health_check():
