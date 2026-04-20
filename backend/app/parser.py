@@ -21,15 +21,31 @@ def parse_eml(file_bytes: bytes) -> dict:
     from_domain = extract_domain(from_header)
     reply_to_domain = extract_domain(reply_to_header)
     
+    # Extract body text for AI Analysis
+    body_content = ""
+    if msg.is_multipart():
+        for part in msg.walk():
+            if part.get_content_type() == 'text/plain':
+                payload = part.get_payload(decode=True)
+                if payload:
+                    body_content = payload.decode('utf-8', errors='ignore')
+                break
+    else:
+        if msg.get_content_type() == 'text/plain':
+            payload = msg.get_payload(decode=True)
+            if payload:
+                body_content = payload.decode('utf-8', errors='ignore')
+                
     return {
         "From": from_header,
         "Reply-To": reply_to_header,
         "Subject": subject,
-        "Message-ID": message_id,
-        "Date": date,
-        "Received": received_headers,
+        "Message-ID": msg.get('Message-ID', ''),
+        "Date": msg.get('Date', ''),
+        "Received": msg.get_all('Received', []),
         "from_domain": from_domain,
         "reply_to_domain": reply_to_domain,
+        "Body": body_content,
     }
 
 def extract_domain(email_header: str) -> str:

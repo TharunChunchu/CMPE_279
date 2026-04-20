@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from app.parser import parse_eml
 from app.heuristics import evaluate_email
+from app.llm import analyze_email_content
 
 app = FastAPI(title="Phishing Detection API")
 
@@ -26,11 +27,19 @@ async def scan_email(file: UploadFile = File(...)):
         content = await file.read()
         parsed_data = parse_eml(content)
         results = evaluate_email(parsed_data)
+        
+        # Call OpenAI Analyst via Subject and Body text
+        llm_analysis = analyze_email_content(
+            subject=parsed_data.get('Subject', ''),
+            body=parsed_data.get('Body', '')
+        )
+        
         return {
             "success": True,
             "filename": file.filename,
             "headers": parsed_data,
-            "results": results
+            "results": results,
+            "llm_analysis": llm_analysis
         }
     except Exception as e:
         return {"success": False, "error": str(e)}

@@ -2,7 +2,7 @@ import { useState, useRef } from 'react'
 import './index.css'
 
 function App() {
-  const [mode, setMode] = useState('single') // 'single' or 'bulk'
+  const [mode, setMode] = useState('single') // 'single', 'bulk', 'about'
   
   // Single Scanning State
   const [dragActive, setDragActive] = useState(false)
@@ -100,26 +100,32 @@ function App() {
   }
 
   return (
-    <div className="app-container">
+    <div className="app-container fade-in">
       <header className="header">
         <h1>Phishing Sentinel</h1>
-        <p>Heuristic-Powered Email Header Analysis & Spoof Detection</p>
+        <p>Heuristic & AI-Powered Email Header Analysis Framework</p>
         
         <div className="mode-toggle">
           <button 
             className={mode === 'single' ? 'active' : ''} 
             onClick={() => { setMode('single'); reset(); }}
-          >Single File Analysis</button>
+          >Live Scan</button>
+          
           <button 
             className={mode === 'bulk' ? 'active' : ''} 
             onClick={() => { setMode('bulk'); reset(); }}
-          >Dataset Bulk Scanner</button>
+          >Benchmark Datasets</button>
+          
+          <button 
+            className={mode === 'about' ? 'active pulse-btn' : 'pulse-btn'} 
+            onClick={() => { setMode('about'); reset(); }}
+          >About This App 💡</button>
         </div>
       </header>
 
       <main>
         {mode === 'single' && !result && !loading && (
-          <div className="glass-panel">
+          <div className="glass-panel scale-in">
             <div 
               className={`upload-zone ${dragActive ? "drag-active" : ""}`}
               onDragEnter={handleDrag}
@@ -129,12 +135,13 @@ function App() {
               onClick={() => inputRef.current?.click()}
             >
               <div className="upload-icon">✉️</div>
-              <div className="upload-text">Drag and drop your email file here</div>
+              <div className="upload-text">Drag and drop your .eml file here</div>
               <div className="upload-subtext">or click to browse from your computer</div>
               <input 
                 ref={inputRef}
                 type="file" 
                 onChange={handleChange} 
+                accept=".eml"
               />
             </div>
             {error && <div className="error-msg">Error: {error}</div>}
@@ -142,9 +149,9 @@ function App() {
         )}
 
         {mode === 'bulk' && !bulkResult && !loading && (
-          <div className="glass-panel bulk-zone">
+          <div className="glass-panel bulk-zone scale-in">
             <h2>Batch Analyze Open-Source Datasets</h2>
-            <p>Direct our heuristic engine to evaluate thousands of emails by providing the absolute path to your dataset folder (e.g. Enron spam corpus).</p>
+            <p>Direct our heuristic engine to evaluate thousands of emails iteratively and visualize threat detection totals.</p>
             <input 
               type="text" 
               className="path-input" 
@@ -156,45 +163,86 @@ function App() {
             {error && <div className="error-msg" style={{marginTop:'1rem'}}>{error}</div>}
           </div>
         )}
+        
+        {mode === 'about' && (
+          <div className="glass-panel about-panel scale-in">
+            <h2>How It Works</h2>
+            <p className="about-intro">This application is a <strong>Hybrid Cybersecurity Framework</strong> built for CMPE-279. It mathematically evaluates both the structural integrity of emails (Metadata/Headers) and the psychological language of the email body.</p>
+            
+            <div className="about-grid">
+              <div className="about-card heuristic-card">
+                <h3>⚙️ The Heuristics Engine</h3>
+                <p>Mechanical checking of raw transmission data to detect the hallmarks of <strong>Domain Spoofing</strong> and <strong>Spear Phishing</strong>:</p>
+                <ul>
+                  <li><strong>Domain Mismatch:</strong> Compares Top-Level Domains from <tt>From</tt> and <tt>Reply-To</tt> strings.</li>
+                  <li><strong>Routing Analysis:</strong> Asserts standard MTA transmission trails counting <tt>Received</tt> headers.</li>
+                  <li><strong>ID Verification:</strong> Checks for syntactical inconsistencies in the <tt>Message-ID</tt>.</li>
+                </ul>
+              </div>
+              
+              <div className="about-card llm-card">
+                <h3>🧠 The Language Model (OpenAI)</h3>
+                <p>While the Heuristics Engine reviews the technical headers, our LLM Agent evaluates the payload to catch <strong>Social Engineering</strong>:</p>
+                <ul>
+                  <li><strong>Psychological Evaluation:</strong> Detects false urgency, panic, and password requests in the plain text body.</li>
+                  <li><strong>Zero-Shot Classification:</strong> Utilizes <tt>GPT-3.5-Turbo</tt> dynamically without static training data.</li>
+                  <li><strong>Explainability:</strong> Outputs readable, natural language justifications alongside the hard math score.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
 
         {loading && (
-          <div className="glass-panel text-center">
+          <div className="glass-panel text-center scale-in">
             <div className="spinner"></div>
-            <p>Running heuristic algorithms across targeted headers...</p>
+            <p className="loading-text">Analyzing email structure & querying AI models...</p>
           </div>
         )}
 
         {/* Single File Result */}
         {result && (
-          <div className="glass-panel results-container">
-            <div className="text-center">
+          <div className="glass-panel results-container scale-in">
+            <div className="status-header">
               <div className={`status-badge status-${result.results.status.toLowerCase()}`}>
                 {result.results.status.toUpperCase()} (Score: {result.results.score})
               </div>
             </div>
 
-            <table className="header-table">
-              <tbody>
-                <tr><th>From</th><td>{result.headers.From || 'Missing'}</td></tr>
-                <tr><th>Reply-To</th><td>{result.headers['Reply-To'] || 'Missing'}</td></tr>
-                <tr><th>Subject</th><td>{result.headers.Subject || 'Missing'}</td></tr>
-                <tr><th>Message-ID</th><td>{result.headers['Message-ID'] || 'Missing'}</td></tr>
-              </tbody>
-            </table>
+            <div className="report-grid">
+              <div className="report-panel header-panel">
+                <h3>Technical Metadata</h3>
+                <table className="header-table">
+                  <tbody>
+                    <tr><th>From</th><td>{result.headers.From || 'Missing'}</td></tr>
+                    <tr><th>Reply-To</th><td>{result.headers['Reply-To'] || 'Missing'}</td></tr>
+                    <tr><th>Message-ID</th><td>{result.headers['Message-ID'] || 'Missing'}</td></tr>
+                  </tbody>
+                </table>
 
-            {result.results.warnings?.length > 0 && (
-              <div className="warning-list">
-                <h3>⚠️ Analysis Warnings</h3>
-                <ul>{result.results.warnings.map((w, idx) => <li key={idx}>{w}</li>)}</ul>
+                {result.results.warnings?.length > 0 && (
+                  <div className="warning-list">
+                    <h4>⚠️ Heuristic Anomalies</h4>
+                    <ul>{result.results.warnings.map((w, idx) => <li key={idx}>{w}</li>)}</ul>
+                  </div>
+                )}
               </div>
-            )}
-            <button className="reset-btn" onClick={reset}>Analyze Another File</button>
+
+              <div className="report-panel llm-panel">
+                <h3>AI Analyst Assessment</h3>
+                <div className="llm-response-box">
+                  <p>{result.llm_analysis}</p>
+                </div>
+              </div>
+            </div>
+            
+            <button className="reset-btn mt-4" onClick={reset}>Scan Another Email</button>
           </div>
         )}
 
         {/* Bulk Scan Result */}
         {bulkResult && (
-          <div className="glass-panel results-container text-center">
+          <div className="glass-panel results-container text-center scale-in">
             <h2>Dataset Benchmark Report</h2>
             <div className="stats-grid">
                <div className="stat-box">
@@ -214,7 +262,7 @@ function App() {
                  <p>{bulkResult.phishing}</p>
                </div>
             </div>
-            <button className="reset-btn" onClick={reset}>Run Another Dataset</button>
+            <button className="reset-btn" onClick={reset}>Scan Another Dataset</button>
           </div>
         )}
       </main>

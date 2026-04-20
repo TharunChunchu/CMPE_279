@@ -285,3 +285,100 @@ button.reset-btn:hover {
   text-align: center;
   margin-top: 1rem;
 }
+
+/* Animations */
+.fade-in { animation: fadeIn 0.8s ease forwards; }
+.scale-in { animation: scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.pulse-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.pulse-btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(96,165,250,0.4) 0%, transparent 70%);
+  transform: translate(-50%, -50%) scale(0);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+}
+
+/* Report Grid */
+.report-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.report-panel {
+  background: rgba(0,0,0,0.2);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+}
+
+.report-panel h3 {
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.5rem;
+  font-size: 1.1rem;
+  color: var(--primary-color);
+}
+
+.llm-response-box {
+  background: linear-gradient(135deg, rgba(167, 139, 250, 0.1), rgba(96, 165, 250, 0.1));
+  border-left: 4px solid #a78bfa;
+  padding: 1rem;
+  border-radius: 4px;
+  line-height: 1.6;
+  font-size: 0.95rem;
+  color: #e2e8f0;
+}
+
+/* About Page */
+.about-intro {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.about-card {
+  background: rgba(255,255,255,0.03);
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+}
+
+.about-card h3 { color: var(--text-primary); }
+.about-card ul { padding-left: 1.2rem; line-height: 1.7; }
+
+.mt-4 { margin-top: 1.5rem; }
+.status-header { text-align: center; margin-bottom: 1.5rem; }
+.loading-text { font-weight: 500; font-size: 1.1rem; margin-top: 1rem; color: var(--primary-color); }
