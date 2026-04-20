@@ -1,0 +1,117 @@
+\documentclass[conference]{IEEEtran}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\begin{document}
+
+\title{Phishing Detection System Using Email Header Analysis}
+
+\author{
+\IEEEauthorblockN{1\textsuperscript{st} Tharun Chunchu}
+\IEEEauthorblockA{\textit{Computer Engineering} \\
+\textit{San José State University}\\
+San Jose, USA \\
+tharun.chunchu@sjsu.edu}
+\and
+\IEEEauthorblockN{2\textsuperscript{nd} [Student 2 Name]}
+\IEEEauthorblockA{\textit{Computer Engineering} \\
+\textit{San José State University}\\
+San Jose, USA \\
+email@sjsu.edu}
+\and
+\IEEEauthorblockN{3\textsuperscript{rd} [Student 3 Name]}
+\IEEEauthorblockA{\textit{Computer Engineering} \\
+\textit{San José State University}\\
+San Jose, USA \\
+email@sjsu.edu}
+}
+
+\maketitle
+
+\begin{abstract}
+As cyber threats continue to evolve, phishing remains one of the most prominent attack vectors compromising personal and corporate security. This paper presents a robust, automated Phishing Detection System that parses and analyzes raw email headers to identify spoofing and malicious intent. By developing a Python-based FastAPI backend and a modern React web interface, the system directly ingests \texttt{.eml} files and applies a heuristic evaluation engine. The engine scrutinizes critical metadata fields including \textit{From}, \textit{Reply-To}, \textit{Message-ID}, and \textit{Received} routing hops to generate an explicit phishing confidence score. The results highlight the effectiveness of integrating real-time metadata scanning into the software development lifecycle to mitigate social engineering attacks.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Phishing Detection, Email Security, Spoofing, Heuristics, \texttt{.eml} Parsing, FastAPI, React
+\end{IEEEkeywords}
+
+\section{Introduction}
+\textit{Lead Author: Tharun Chunchu}
+
+Phishing attacks have grown increasingly sophisticated, often bypassing standard email filters through advanced domain spoofing and routing manipulation. At the core of these attacks is the exploitation of the Simple Mail Transfer Protocol (SMTP), which traditionally lacks strict verification of sender identities. Consequently, malicious actors can forge email headers to impersonate legitimate entities, deceiving users into exposing sensitive information or executing malware. 
+
+\subsection{Overview of the Problem and Motivation}
+Despite the widespread deployment of security measures such as SPF (Sender Policy Framework) and DKIM (DomainKeys Identified Mail), spear-phishing remains a pervasive threat. Many clients fail to surface underlying header anomalies to end-users in a discernible manner. The motivation behind this project is to bridge the gap between complex analytical email forensics and accessible security tools. By building a transparent detection system, we allow users and organizations to manually verify suspicious correspondence effortlessly.
+
+\subsection{Statement of Objectives}
+The primary objective of this project is to develop and implement a full-stack Software Security application that identifies phishing emails. Specific goals include:
+\begin{itemize}
+    \item Creating an efficient Python-based parsing engine capable of extracting and sanitizing raw \texttt{.eml} metadata.
+    \item Designing a heuristic scoring mechanism to detect spoofed domains, missing transmission IDs, and suspicious routing paths.
+    \item Developing an interactive frontend dashboard for seamless file upload and real-time security assessment.
+\end{itemize}
+
+\subsection{Report Outline}
+The remainder of this report is organized as follows: Section II discusses the system architecture and technological stack. Section III details the implementation of the parsing logic and the heuristic detection algorithms. Section IV covers the frontend development and user interface integration. Finally, Section V concludes the report with a summary of the project's impact and findings.
+
+\section{System Architecture}
+\textit{Lead Author: [Student 2 Name]}
+
+The architectural design of the Phishing Detection System is divided into a robust backend processing layer and a dynamic client-side interface, adhering to modern secure software development principles.
+
+\subsection{Backend Infrastructure}
+The backend is constructed using FastAPI, a modern, fast web framework for building APIs with Python. FastAPI was chosen for its high performance, asynchronous request handling, and automatic generation of security-compliant OpenAPI documentation. The backend exposes the \texttt{/api/scan} endpoint, which accepts multipart form data representing the uploaded \texttt{.eml} files.
+
+\subsection{Frontend Infrastructure}
+The frontend is built utilizing Vite and React. Instead of relying on vulnerable or bloated third-party template frameworks, the UI is styled utilizing bespoke CSS featuring modern visual aesthetics (such as glassmorphism and subtle micro-animations). This isolates the presentation layer entirely from the backend analytical engine, minimizing potential cross-site scripting (XSS) attack vectors by cleanly compartmentalizing data presentation rules.
+
+\section{Implementation of the Detection Engine}
+\textit{Lead Author: [Student 3 Name]}
+
+The core contribution of this project resides in the email analysis and heuristics engine. The system does not merely rely on keyword matching, but mathematically evaluates structural mismatches in standard SMTP transmission headers.
+
+\subsection{Email Header Parsing}
+To safely unpack the email metadata, the system utilizes Python's native \texttt{email.parser.BytesParser}. This guarantees that the stream is evaluated securely without executing potentially malicious payloads embedded in HTML bodies. The engine targets specific metadata tags:
+\begin{enumerate}
+    \item \textbf{From and Reply-To}: Used to establish sender identity.
+    \item \textbf{Subject}: Analyzed for social engineering hallmarks (e.g., ``Urgent'', ``Suspended'', ``Verify'').
+    \item \textbf{Message-ID}: A universally unique identifier assigned by the originating mail server.
+    \item \textbf{Received}: A sequential list of hops tracing the email's origin through specific IP addresses and MTAs (Mail Transfer Agents).
+\end{enumerate}
+
+\subsection{Heuristic Scoring Algorithm}
+Once the metrics are cleanly extracted, the system runs a sequential heuristic evaluation. Points are accumulated to determine an active risk score:
+\begin{itemize}
+    \item \textbf{Domain Mismatch (Score +3)}: The most critical spoofing indicator. The engine extracts the top-level and secondary domains from both the \textit{From} and \textit{Reply-To} fields via regex isolation. Diverse or conflicting domains signal an immediate spear-phishing attempt.
+    \item \textbf{Transmission Anomalies (Score +2)}: If an email lacks a \textit{Message-ID} or possesses an irregularly formatted ID, this heavily implies direct script injection rather than routing through a legitimate corporate outbound server.
+    \item \textbf{Routing Shortfalls (Score +1)}: If fewer than two \textit{Received} headers exist, the email was likely executed via local bulk-mail tools directly to the target, bypassing standard external infrastructure.
+\end{itemize}
+
+Depending on the accumulated score threshold, the logic categorizes the file rigidly into safe, suspicious, or explicit phishing bounds.
+
+\section{Results and Output Validation}
+\textit{Lead Author: Tharun Chunchu / Shared}
+
+To ensure validity, the system was aggressively tested against curated datasets. Using automated \texttt{pytest} pipelines, we ensured that boundary edge cases—such as malformed headers, blank lines, or Unicode anomalies—did not crash the parsing engine.
+
+Furthermore, we simulated attacks using mock datasets derived from standard Open Source resources resembling the Enron Email dataset. When fed a benign message, the system cleanly traced identical domains and reported a \textit{Safe} classification with zero warnings. When presented with a fabricated PayPal security alert originating from a mismatched domain structure with zero message IDs, the heuristic engine instantaneously elevated the score to maximum, halting the user with explicit textual warnings describing the exact header anomalies. 
+
+\section{Conclusions}
+\textit{Lead Author: Tharun Chunchu}
+
+In this project, we successfully modeled, designed, and implemented a Software Security system to combat email phishing and SMTP spoofing. By relying on deterministic header evaluation rather than opaque machine learning, we built a tool that provides immediate, explainable feedback to users. The integration of Python's fast parsing capabilities alongside a secure React frontend ensures scalability and resilience. The findings demonstrate that examining technical transmission metadata—such as mismatched domains and missing MTAs—is a highly reliable detection mechanism that effectively mitigates user susceptibility to social engineering. 
+
+\begin{thebibliography}{00}
+\bibitem{b1} W. Stallings, \textit{Cryptography and Network Security: Principles and Practice}, 8th ed. Pearson, 2020.
+\bibitem{b2} W. A. Conklin, G. White, \textit{Principles of Computer Security: CompTIA Security+ and Beyond}, 6th ed. McGraw Hill, 2022.
+\bibitem{b3} A. Almomani, B. B. Gupta, S. Atawneh, A. Meulenberg, and E. Almomani, ``A Survey of Phishing Email Filtering Techniques,'' \textit{IEEE Communications Surveys \& Tutorials}, vol. 15, no. 4, pp. 2070--2090, 2013.
+\bibitem{b4} J. Ma, L. K. Saul, S. Savage, and G. M. Voelker, ``Beyond blacklists: learning to detect malicious web sites from suspicious URLs,'' \textit{Proceedings of the 15th ACM SIGKDD international conference on Knowledge discovery and data mining}, 2009.
+\end{thebibliography}
+
+\end{document}

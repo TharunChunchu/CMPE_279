@@ -1,0 +1,11 @@
+From: Support <support@github.com>
+To: user@example.com
+Reply-To: support@github.com
+Subject: Your GitHub password has been reset
+Date: Wed, 20 Apr 2026 12:00:00 -0700
+Message-ID: <1234567890.github@github.com>
+Received: from mail.github.com by mail.example.com with SMTP id 1234;
+Received: from internal.github.com by mail.github.com with SMTP id 5678;
+
+Hi User,
+Your password was successfully reset.
