@@ -11,7 +11,7 @@ function App() {
   const [error, setError] = useState(null)
   
   // Bulk Scanning State
-  const [bulkPath, setBulkPath] = useState('')
+  const [bulkPath, setBulkPath] = useState('/Users/tharun/Desktop/CMPE_279/spam')
   const [bulkResult, setBulkResult] = useState(null)
 
   const inputRef = useRef(null)
