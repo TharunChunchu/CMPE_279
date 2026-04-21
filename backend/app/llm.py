@@ -14,8 +14,8 @@ def analyze_email_content(subject: str, body: str) -> str:
         
     try:
         genai.configure(api_key=api_key)
-        # Using Gemini 1.5 Flash for the fastest, cheapest inference
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        # Fallback to the rock-solid 'gemini-pro' model which maps to all region/API versions properly
+        model = genai.GenerativeModel('gemini-pro')
         
         prompt = f"""
         You are an elite Cybersecurity Email Analyst. 
