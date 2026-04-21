@@ -34,7 +34,7 @@ email@sjsu.edu}
 \maketitle
 
 \begin{abstract}
-As cyber threats continue to evolve, phishing remains one of the most prominent attack vectors compromising personal and corporate security. This paper presents a robust, automated Phishing Detection System that parses and analyzes raw email headers to identify spoofing and malicious intent. By developing a Python-based FastAPI backend and a modern React web interface, the system directly ingests \texttt{.eml} files and applies a heuristic evaluation engine. The engine scrutinizes critical metadata fields including \textit{From}, \textit{Reply-To}, \textit{Message-ID}, and \textit{Received} routing hops to generate an explicit phishing confidence score. The results highlight the effectiveness of integrating real-time metadata scanning into the software development lifecycle to mitigate social engineering attacks.
+As cyber threats continue to evolve, phishing remains one of the most prominent attack vectors compromising personal and corporate security. This paper presents a robust, Hybrid Phishing Detection System that merges a geometric heuristic metadata engine with an active Large Language Model (Google Gemini). By developing a Python-based FastAPI backend and a modern React web interface, the system securely ingests \texttt{.eml} files. The heuristic engine scrutinizes critical metadata fields including \textit{From}, \textit{Reply-To}, \textit{Message-ID}, and \textit{Received} routing hops. Simultaneously, the Gemini-2.5-Flash model evaluates the raw email payload for psychological manipulation. The results highlight the effectiveness of integrating both mathematical routing analysis and Natural Language Processing (NLP) to definitively mitigate social engineering attacks.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -54,6 +54,7 @@ The primary objective of this project is to develop and implement a full-stack S
 \begin{itemize}
     \item Creating an efficient Python-based parsing engine capable of extracting and sanitizing raw \texttt{.eml} metadata.
     \item Designing a heuristic scoring mechanism to detect spoofed domains, missing transmission IDs, and suspicious routing paths.
+    \item Integrating the Google Gemini Generative AI Model to dynamically detect social engineering and coercive language in the email body.
     \item Developing an interactive frontend dashboard for seamless file upload and real-time security assessment.
 \end{itemize}
 
@@ -71,10 +72,10 @@ The backend is constructed using FastAPI, a modern, fast web framework for build
 \subsection{Frontend Infrastructure}
 The frontend is built utilizing Vite and React. Instead of relying on vulnerable or bloated third-party template frameworks, the UI is styled utilizing bespoke CSS featuring modern visual aesthetics (such as glassmorphism and subtle micro-animations). This isolates the presentation layer entirely from the backend analytical engine, minimizing potential cross-site scripting (XSS) attack vectors by cleanly compartmentalizing data presentation rules.
 
-\section{Implementation of the Detection Engine}
-\textit{Lead Author: [Student 3 Name]}
+\section{Implementation of the Hybrid Detection Engine}
+\textit{Lead Author: [Student 3 Name] / Tharun Chunchu}
 
-The core contribution of this project resides in the email analysis and heuristics engine. The system does not merely rely on keyword matching, but mathematically evaluates structural mismatches in standard SMTP transmission headers.
+The core contribution of this project resides in the dual-layered hybrid analysis engine. The system pairs a mathematical structural evaluation of SMTP headers with an intelligent generative linguistic assessment.
 
 \subsection{Email Header Parsing}
 To safely unpack the email metadata, the system utilizes Python's native \texttt{email.parser.BytesParser}. This guarantees that the stream is evaluated securely without executing potentially malicious payloads embedded in HTML bodies. The engine targets specific metadata tags:
@@ -93,19 +94,22 @@ Once the metrics are cleanly extracted, the system runs a sequential heuristic e
     \item \textbf{Routing Shortfalls (Score +1)}: If fewer than two \textit{Received} headers exist, the email was likely executed via local bulk-mail tools directly to the target, bypassing standard external infrastructure.
 \end{itemize}
 
-Depending on the accumulated score threshold, the logic categorizes the file rigidly into safe, suspicious, or explicit phishing bounds.
+\subsection{Active LLM Exploit Assessment}
+To combat sophisticated spear-phishing attacks that bypass technical routing triggers by utilizing legitimately acquired domains, the system employs the Google Gemini (\texttt{gemini-2.5-flash}) Large Language Model. The raw message body is passed through a secure prompt funnel acting as an Elite Cybersecurity Analyst. If the LLM zero-shot classifier detects artificial urgency, explicit credential scraping, or dangerous manipulation within the text, the module forcefully injects a \textbf{+5 point penalty} to the baseline Threat Score. This aggressively overrides the technical categorization, guaranteeing that emails with authentic structural headers but malicious social-engineering bodies are properly halted and flagged as ``Phishing'' on the React dashboard.
+
+Depending on the accumulated score threshold, the hybrid logic categorizes the file rigidly into safe, suspicious, or explicit phishing bounds.
 
 \section{Results and Output Validation}
 \textit{Lead Author: Tharun Chunchu / Shared}
 
 To ensure validity, the system was aggressively tested against curated datasets. Using automated \texttt{pytest} pipelines, we ensured that boundary edge cases—such as malformed headers, blank lines, or Unicode anomalies—did not crash the parsing engine.
 
-Furthermore, we simulated attacks using mock datasets derived from standard Open Source resources resembling the Enron Email dataset. When fed a benign message, the system cleanly traced identical domains and reported a \textit{Safe} classification with zero warnings. When presented with a fabricated PayPal security alert originating from a mismatched domain structure with zero message IDs, the heuristic engine instantaneously elevated the score to maximum, halting the user with explicit textual warnings describing the exact header anomalies. 
+Furthermore, we simulated attacks using mock datasets derived from standard Open Source resources resembling the Enron Email dataset. When fed a benign message, the system cleanly traced identical domains and reported a \textit{Safe} classification. However, when presented with a fabricated attack originating from a legitimate un-spoofed domain containing an urgent credential-harvesting scam, the heuristic engine alone would have cleared it as technically safe. Thanks to the Hybrid engine logic, the Gemini LLM instantaneously detected the manipulation, elevated the score to maximum, and halted the user with explicit textual warnings detailing the psychological anomalies. 
 
 \section{Conclusions}
 \textit{Lead Author: Tharun Chunchu}
 
-In this project, we successfully modeled, designed, and implemented a Software Security system to combat email phishing and SMTP spoofing. By relying on deterministic header evaluation rather than opaque machine learning, we built a tool that provides immediate, explainable feedback to users. The integration of Python's fast parsing capabilities alongside a secure React frontend ensures scalability and resilience. The findings demonstrate that examining technical transmission metadata—such as mismatched domains and missing MTAs—is a highly reliable detection mechanism that effectively mitigates user susceptibility to social engineering. 
+In this project, we successfully modeled, designed, and implemented a Hybrid Software Security system to combat email phishing and SMTP spoofing. By synthesizing deterministic header evaluation with the natural language comprehension of Google Gemini, we built a tool that provides immediate, foolproof feedback to users. The integration of Python's fast parsing capabilities alongside a secure React frontend ensures scalability and resilience. The findings demonstrate that examining technical transmission metadata alone is insufficient; fusing it with active Generative AI provides a truly comprehensive detection mechanism that effectively mitigates user susceptibility to sophisticated social engineering. 
 
 \begin{thebibliography}{00}
 \bibitem{b1} W. Stallings, \textit{Cryptography and Network Security: Principles and Practice}, 8th ed. Pearson, 2020.
