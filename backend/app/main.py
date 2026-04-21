@@ -26,14 +26,27 @@ async def scan_email(file: UploadFile = File(...)):
     try:
         content = await file.read()
         parsed_data = parse_eml(content)
-        results = evaluate_email(parsed_data)
         
-        # Call OpenAI Analyst via Subject and Body text
+        # Call AI Analyst via Subject and Body text
         llm_analysis = analyze_email_content(
             subject=parsed_data.get('Subject', ''),
             body=parsed_data.get('Body', '')
         )
         
+        results = evaluate_email(parsed_data)
+        
+        # Hybrid AI Scoring Integration
+        llm_lower = llm_analysis.lower()
+        if any(keyword in llm_lower for keyword in ['phishing attempt', 'malicious', 'scam', 'highly suspicious', 'harmful link']):
+            results['score'] += 5
+            results['warnings'].append("AI Agent detected social-engineering exploitation tactics in email body.")
+            
+        # Re-evaluate status badge classification based on new hybrid score
+        if results['score'] >= 5:
+            results['status'] = 'Phishing'
+        elif results['score'] >= 3:
+            results['status'] = 'Suspicious'
+
         return {
             "success": True,
             "filename": file.filename,
