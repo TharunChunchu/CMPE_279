@@ -2,7 +2,7 @@ import { useState, useRef } from 'react'
 import './index.css'
 
 function App() {
-  const [mode, setMode] = useState('single') // 'single', 'bulk', 'about'
+  const [mode, setMode] = useState('home') // 'home', 'single', 'bulk', 'about'
   
   // Single Scanning State
   const [dragActive, setDragActive] = useState(false)
@@ -102,28 +102,53 @@ function App() {
   return (
     <div className="app-container fade-in">
       <header className="header">
-        <h1>Phishing Sentinel</h1>
-        <p>Heuristic & AI-Powered Email Header Analysis Framework</p>
+        <h1 onClick={() => { setMode('home'); reset(); }} style={{cursor: 'pointer'}}>Phishing Sentinel</h1>
+        <p>Enterprise Email Header Analysis & Forensics Framework</p>
         
-        <div className="mode-toggle">
-          <button 
-            className={mode === 'single' ? 'active' : ''} 
-            onClick={() => { setMode('single'); reset(); }}
-          >Live Scan</button>
-          
-          <button 
-            className={mode === 'bulk' ? 'active' : ''} 
-            onClick={() => { setMode('bulk'); reset(); }}
-          >Benchmark Datasets</button>
-          
-          <button 
-            className={mode === 'about' ? 'active pulse-btn' : 'pulse-btn'} 
-            onClick={() => { setMode('about'); reset(); }}
-          >About This App 💡</button>
-        </div>
+        {/* Navigation Bar */}
+        {mode !== 'home' && (
+          <div className="mode-toggle scale-in">
+            <button 
+              className={mode === 'single' ? 'active' : ''} 
+              onClick={() => { setMode('single'); reset(); }}
+            >Live Intercept</button>
+            <button 
+              className={mode === 'bulk' ? 'active' : ''} 
+              onClick={() => { setMode('bulk'); reset(); }}
+            >Dataset Benchmarks</button>
+            <button 
+              className={mode === 'about' ? 'active' : ''} 
+              onClick={() => { setMode('about'); reset(); }}
+            >Architecture Logic</button>
+          </div>
+        )}
       </header>
 
       <main>
+        {/* Home Screen Dashboard */}
+        {mode === 'home' && (
+          <div className="home-grid scale-in">
+            <div className="home-card" onClick={() => { setMode('single'); reset(); }}>
+              <div className="card-icon">🎯</div>
+              <h2>Live Intercept</h2>
+              <p>Drag and drop a raw email file to run a real-time extraction and threat assessment. Our Hybrid Heuristics + LLM engine will dissect the underlying routing payloads.</p>
+            </div>
+            
+            <div className="home-card" onClick={() => { setMode('bulk'); reset(); }}>
+              <div className="card-icon">⚡</div>
+              <h2>Dataset Benchmarks</h2>
+              <p>Execute tests across thousands of files simultaneously validating your engine's accuracy across huge Enron or SpamAssassin historical datasets natively on disk.</p>
+            </div>
+            
+            <div className="home-card" style={{gridColumn: '1 / -1', minHeight: '150px', padding: '2rem'}} onClick={() => { setMode('about'); reset(); }}>
+              <div className="card-icon" style={{fontSize: '2rem', marginBottom: '0.5rem'}}>📚</div>
+              <h2>Architecture Sandbox</h2>
+              <p>Learn exactly how this framework detects domain spoofing behind the scenes.</p>
+            </div>
+          </div>
+        )}
+
+        {/* Live Scan Mode */}
         {mode === 'single' && !result && !loading && (
           <div className="glass-panel scale-in">
             <div 
@@ -135,8 +160,8 @@ function App() {
               onClick={() => inputRef.current?.click()}
             >
               <div className="upload-icon">✉️</div>
-              <div className="upload-text">Drag and drop your .eml file here</div>
-              <div className="upload-subtext">or click to browse from your computer</div>
+              <div className="upload-text">Upload suspect payload</div>
+              <div className="upload-subtext">Drop .eml file here to extract metadata</div>
               <input 
                 ref={inputRef}
                 type="file" 
@@ -148,10 +173,11 @@ function App() {
           </div>
         )}
 
+        {/* Dataset Bulk Scanner Mode */}
         {mode === 'bulk' && !bulkResult && !loading && (
-          <div className="glass-panel bulk-zone scale-in">
-            <h2>Batch Analyze Open-Source Datasets</h2>
-            <p>Direct our heuristic engine to evaluate thousands of emails iteratively and visualize threat detection totals.</p>
+          <div className="glass-panel text-center scale-in">
+            <h2>Batch Analyze Target Environment</h2>
+            <p style={{color: 'var(--text-secondary)', marginBottom: '1.5rem'}}>Evaluate thousands of unstructured emails iteratively to validate machine scoring totals without manual inspection.</p>
             <input 
               type="text" 
               className="path-input" 
@@ -159,94 +185,98 @@ function App() {
               value={bulkPath} 
               onChange={(e) => setBulkPath(e.target.value)} 
             />
-            <button className="reset-btn" onClick={runBulkScan}>Run Dataset Benchmark</button>
+            <button className="reset-btn" onClick={runBulkScan}>Execute Mass Extractor</button>
             {error && <div className="error-msg" style={{marginTop:'1rem'}}>{error}</div>}
           </div>
         )}
         
+        {/* About Architecture Sandbox Mode */}
         {mode === 'about' && (
           <div className="glass-panel about-panel scale-in">
-            <h2>How It Works</h2>
-            <p className="about-intro">This application is a <strong>Hybrid Cybersecurity Framework</strong> built for CMPE-279. It mathematically evaluates both the structural integrity of emails (Metadata/Headers) and the psychological language of the email body.</p>
+            <h2 className="text-center">How It Works</h2>
+            <p className="about-intro">Phishing Sentinel is a <strong>Hybrid Cybersecurity Framework</strong> architected to bypass simplistic keyword filters. It mathematically evaluates both the structural transport integrity (Metadata headers) and the psychological language of the email body simultaneously.</p>
             
             <div className="about-grid">
-              <div className="about-card heuristic-card">
-                <h3>⚙️ The Heuristics Engine</h3>
-                <p>Mechanical checking of raw transmission data to detect the hallmarks of <strong>Domain Spoofing</strong> and <strong>Spear Phishing</strong>:</p>
+              <div className="about-card">
+                <h3>⚙️ The Metadata Heuristics</h3>
+                <p style={{color: 'var(--text-secondary)', marginTop: '0.5rem'}}>Direct inspection of raw transmission data to detect the hallmarks of <strong>Domain Spoofing</strong>:</p>
                 <ul>
-                  <li><strong>Domain Mismatch:</strong> Compares Top-Level Domains from <tt>From</tt> and <tt>Reply-To</tt> strings.</li>
-                  <li><strong>Routing Analysis:</strong> Asserts standard MTA transmission trails counting <tt>Received</tt> headers.</li>
-                  <li><strong>ID Verification:</strong> Checks for syntactical inconsistencies in the <tt>Message-ID</tt>.</li>
+                  <li><strong>Sender Verification:</strong> Audits Top-Level Domains between <tt>From:</tt> and the envelope <tt>Reply-To:</tt> variables looking for discrepancies.</li>
+                  <li><strong>Routing Analysis:</strong> Asserts standard MTA transmission trails by counting sequential <tt>Received:</tt> header hops securely.</li>
+                  <li><strong>Identifier Forging:</strong> Flags missing or improperly structurally formatted <tt>Message-ID</tt> arrays.</li>
                 </ul>
               </div>
               
-              <div className="about-card llm-card">
-                <h3>🧠 The Language Model (OpenAI)</h3>
-                <p>While the Heuristics Engine reviews the technical headers, our LLM Agent evaluates the payload to catch <strong>Social Engineering</strong>:</p>
+              <div className="about-card">
+                <h3>🧠 Active LLM Exploit Analyst</h3>
+                <p style={{color: 'var(--text-secondary)', marginTop: '0.5rem'}}>While heuristics capture technical network routing falsification, the AI evaluates payload syntax for <strong>Social Engineering</strong>:</p>
                 <ul>
-                  <li><strong>Psychological Evaluation:</strong> Detects false urgency, panic, and password requests in the plain text body.</li>
-                  <li><strong>Zero-Shot Classification:</strong> Utilizes <tt>GPT-3.5-Turbo</tt> dynamically without static training data.</li>
-                  <li><strong>Explainability:</strong> Outputs readable, natural language justifications alongside the hard math score.</li>
+                  <li><strong>Psychological Defense:</strong> Detects false urgency, manipulated timelines, and password credential requests hidden in plain text.</li>
+                  <li><strong>Zero-Shot Generation:</strong> Dissects language dynamically utilizing <tt>OpenAI</tt> without relying on static ML training sets.</li>
+                  <li><strong>Human Explainability:</strong> Computes readable justifications complementing the blunt mathematical heuristic engine score.</li>
                 </ul>
               </div>
             </div>
           </div>
         )}
 
+        {/* Loading Spinner */}
         {loading && (
           <div className="glass-panel text-center scale-in">
             <div className="spinner"></div>
-            <p className="loading-text">Analyzing email structure & querying AI models...</p>
+            <p className="loading-text">Engaging neural heuristics & extracting metadata...</p>
           </div>
         )}
 
-        {/* Single File Result */}
+        {/* Live Scan Results Display */}
         {result && (
-          <div className="glass-panel results-container scale-in">
+          <div className="glass-panel scale-in">
             <div className="status-header">
               <div className={`status-badge status-${result.results.status.toLowerCase()}`}>
-                {result.results.status.toUpperCase()} (Score: {result.results.score})
+                {result.results.status.toUpperCase()} (Threat Score: {result.results.score})
               </div>
             </div>
 
             <div className="report-grid">
               <div className="report-panel header-panel">
-                <h3>Technical Metadata</h3>
+                <h3>Technical Heuristic Extraction</h3>
                 <table className="header-table">
                   <tbody>
-                    <tr><th>From</th><td>{result.headers.From || 'Missing'}</td></tr>
-                    <tr><th>Reply-To</th><td>{result.headers['Reply-To'] || 'Missing'}</td></tr>
-                    <tr><th>Message-ID</th><td>{result.headers['Message-ID'] || 'Missing'}</td></tr>
+                    <tr><th>Forged From</th><td>{result.headers.From || 'Missing'}</td></tr>
+                    <tr><th>Reply-To Hub</th><td>{result.headers['Reply-To'] || 'Missing'}</td></tr>
+                    <tr><th>Identity Hash</th><td>{result.headers['Message-ID'] || 'Missing'}</td></tr>
                   </tbody>
                 </table>
 
                 {result.results.warnings?.length > 0 && (
-                  <div className="warning-list">
-                    <h4>⚠️ Heuristic Anomalies</h4>
-                    <ul>{result.results.warnings.map((w, idx) => <li key={idx}>{w}</li>)}</ul>
+                  <div className="warning-list" style={{marginTop: '1.5rem'}}>
+                    <h4 style={{color: 'var(--warning-color)', marginBottom: '0.5rem'}}>⚠️ Anomaly Vectors Triggered</h4>
+                    <ul style={{paddingLeft: '1.5rem', color: 'var(--text-secondary)'}}>
+                      {result.results.warnings.map((w, idx) => <li key={idx} style={{marginBottom: '0.2rem'}}>{w}</li>)}
+                    </ul>
                   </div>
                 )}
               </div>
 
               <div className="report-panel llm-panel">
-                <h3>AI Analyst Assessment</h3>
+                <h3>AI Threat Assessment</h3>
                 <div className="llm-response-box">
                   <p>{result.llm_analysis}</p>
                 </div>
               </div>
             </div>
             
-            <button className="reset-btn mt-4" onClick={reset}>Scan Another Email</button>
+            <button className="reset-btn mt-4" onClick={reset}>Wipe Data & Scan Next Payload</button>
           </div>
         )}
 
-        {/* Bulk Scan Result */}
+        {/* Bulk Scan Results Display */}
         {bulkResult && (
-          <div className="glass-panel results-container text-center scale-in">
-            <h2>Dataset Benchmark Report</h2>
+          <div className="glass-panel text-center scale-in">
+            <h2 style={{color: 'var(--secondary-color)'}}>Dataset Benchmark Matrix</h2>
             <div className="stats-grid">
                <div className="stat-box">
-                 <h3>Total Emails</h3>
+                 <h3>Aggregate Pool</h3>
                  <p>{bulkResult.total}</p>
                </div>
                <div className="stat-box safe-box">
@@ -254,15 +284,15 @@ function App() {
                  <p>{bulkResult.safe}</p>
                </div>
                <div className="stat-box susp-box">
-                 <h3>Suspicious Routing</h3>
+                 <h3>Suspect Routing</h3>
                  <p>{bulkResult.suspicious}</p>
                </div>
                <div className="stat-box phish-box">
-                 <h3>Confirmed Spoofed</h3>
+                 <h3>Confirmed Exploit</h3>
                  <p>{bulkResult.phishing}</p>
                </div>
             </div>
-            <button className="reset-btn" onClick={reset}>Scan Another Dataset</button>
+            <button className="reset-btn" onClick={reset}>Analyze Next Dataset Block</button>
           </div>
         )}
       </main>
